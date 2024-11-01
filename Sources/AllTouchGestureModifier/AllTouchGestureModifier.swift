@@ -151,55 +151,56 @@ fileprivate struct AllTouchGesturePreview: View {
     var body: some View {
         VStack {
             ZStack {
-                Color.yellow.frame(width: 200, height: 200)
-                    .allTouchGesture { pos in
-                        states.removeFirst()
-                        self.pos = pos
-                        self.states.append(.touchDown)
-                    } onConfirm: { pos in
-                        states.removeFirst()
-                        self.pos = pos
-                        self.states.append(.confirm)
-                    } onTouchUp: { pos in
-                        states.removeFirst()
-                        self.pos = pos
-                        self.states.append(.touchUp)
-                    } onCancel: { pos in
-                        states.removeFirst()
-                        self.pos = pos
-                        self.states.append(.cancel)
-                    }
-                // Notice how multiple allTouchGesture's behavior can be cumulated.
-                    .allTouchGesture{_ in } onDragging: { pos in
-                        self.pos = pos
-                        //                        states.removeFirst()
-                        //                        self.states.append(.dragging)
-                    } onDragInside: { pos in
-                        // Uncomment to try it out!
-                        //                        states.removeFirst()
-                        //                        self.pos = pos
-                        //                        self.states.append(.dragInside)
-                    } onDragOutside: { pos in
-                        // Uncomment to try it out!
-                        //                        states.removeFirst()
-                        //                        self.pos = pos
-                        //                        self.states.append(.dragOutside)
-                    } onDragEnter: { pos in
-                        states.removeFirst()
-                        self.pos = pos
-                        self.states.append(.dragEnter)
-                    } onDragExit: { pos in
-                        states.removeFirst()
-                        self.pos = pos
-                        self.states.append(.dragExit)
-                    }
-                
-                
+                LinearGradient(colors: [Color(red: 52/255, green: 152/255, blue: 219/255), .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    .cornerRadius(15)
+                    .frame(width: 300, height: 160)                    
                 VStack {
+                    Text("AllTouchGestureModifier")
                     Text(stateText(states.last ?? .touchUp))
                     Text("\(String(format: "%.2f", pos.x)), \(String(format: "%.2f", pos.y))")
                 }
                 .font(.system(size: 20, weight: .bold))
+            }
+            .allTouchGesture { pos in
+                states.removeFirst()
+                self.pos = pos
+                self.states.append(.touchDown)
+            } onConfirm: { pos in
+                states.removeFirst()
+                self.pos = pos
+                self.states.append(.confirm)
+            } onTouchUp: { pos in
+                states.removeFirst()
+                self.pos = pos
+                self.states.append(.touchUp)
+            } onCancel: { pos in
+                states.removeFirst()
+                self.pos = pos
+                self.states.append(.cancel)
+            }
+        // Notice how multiple allTouchGesture's behavior can be cumulated.
+            .allTouchGesture{_ in } onDragging: { pos in
+                self.pos = pos
+                //                        states.removeFirst()
+                //                        self.states.append(.dragging)
+            } onDragInside: { pos in
+                // Uncomment to try it out!
+                //                        states.removeFirst()
+                //                        self.pos = pos
+                //                        self.states.append(.dragInside)
+            } onDragOutside: { pos in
+                // Uncomment to try it out!
+                //                        states.removeFirst()
+                //                        self.pos = pos
+                //                        self.states.append(.dragOutside)
+            } onDragEnter: { pos in
+                states.removeFirst()
+                self.pos = pos
+                self.states.append(.dragEnter)
+            } onDragExit: { pos in
+                states.removeFirst()
+                self.pos = pos
+                self.states.append(.dragExit)
             }
             Text("History")
                 .font(.system(size: 18, weight: .bold))
@@ -210,7 +211,7 @@ fileprivate struct AllTouchGesturePreview: View {
             }
             
         }
-        .frame(width: 400, height: 600, alignment: .center)
+        .frame(width: 450, height: 600, alignment: .center)
     }
     
     private func stateText(_ state: TouchState) -> String {

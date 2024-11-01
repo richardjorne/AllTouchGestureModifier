@@ -1,4 +1,7 @@
 # AllTouchGestureModifier
+
+![](20241101-001727.gif#pic_center =300x300)
+
 .allTouchGestureModifier is a SwiftUI modifier that enables you to access the most useful touch gestures in UIKit and even touch position.
 
 This is also a good option if you just want to obtain the touch position.
@@ -6,7 +9,21 @@ This is also a good option if you just want to obtain the touch position.
 .allTouchGestureModifier是一个SwiftUI的Modifier。有了它，你就可以使用UIKit中最重要的几个点按手势。不仅如此，你还可以访问点按位置！
 哪怕只是为了获取点按位置，.allTouchGestureModifier也值得尝试！
 
-# Installation
+
+| Supported Gesture      |
+| ---------------------- |
+| touchDown              |
+| confirm(touchUpInside) |
+| touchUp                |
+| cancel(touchUpOutside) |
+| dragging               |
+| dragInside             |
+| dragOutside            |
+| dragEnter              |
+| dragExit               |
+
+
+# Installation 安装
 
 ## Swift Package
 
