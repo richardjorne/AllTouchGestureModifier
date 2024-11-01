@@ -1,7 +1,6 @@
 # AllTouchGestureModifier
 
-![header](https://github.com/richardjorne/AllTouchGestureModifier/blob/main/header.gif)
-
+<p align="center"><img src="header.gif"/></p>
 .allTouchGestureModifier is a SwiftUI modifier that enables you to access the most useful touch gestures in UIKit and even touch position.
 
 This is also a good option if you just want to obtain the touch position.
