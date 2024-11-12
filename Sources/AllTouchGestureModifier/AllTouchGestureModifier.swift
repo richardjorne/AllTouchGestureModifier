@@ -60,7 +60,7 @@ public struct AllTouchGestureModifier: ViewModifier {
                 .onChanged { value in
                     if let geo = geo {
                         if !isDragging {
-                            if isPointInside(value.location, in: geo) { return; }
+                            if !isPointInside(value.location, in: geo) { return; }
                             isDragging = true
                             onTouchDown(value.location)
                         }
