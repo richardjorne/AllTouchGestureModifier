@@ -81,7 +81,6 @@ public struct AllTouchGestureModifier: ViewModifier {
                 }
                 .onEnded { value in
                     isDragging = false
-                    eventEnded = true
                     onTouchUp(dragLocation)
                     if let geo = geo {
                         if isPointInside(value.location, in: geo) {
