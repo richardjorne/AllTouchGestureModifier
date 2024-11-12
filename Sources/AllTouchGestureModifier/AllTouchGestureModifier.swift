@@ -58,8 +58,12 @@ public struct AllTouchGestureModifier: ViewModifier {
             )
             .simultaneousGesture(DragGesture(minimumDistance: 0)
                 .onChanged { value in
-                    onDragging(value.location)
                     if let geo = geo {
+                        if !isDragging {
+                            if isPointInside(value, in: geo) { return; }
+                            isDragging = true
+                            onTouchDown(value.location)
+                        }
                         if isPointInside(value.location, in: geo) {
                             onDragInside(value.location)
                             if !isPointInside(dragLocation, in: geo) {
@@ -71,15 +75,13 @@ public struct AllTouchGestureModifier: ViewModifier {
                                 onDragExit(value.location)
                             }
                         }
-                        if !isDragging {
-                            isDragging = true
-                            onTouchDown(value.location)
-                        }
+                        onDragging(value.location)
                         dragLocation = value.location
                     }
                 }
                 .onEnded { value in
                     isDragging = false
+                    eventEnded = true
                     onTouchUp(dragLocation)
                     if let geo = geo {
                         if isPointInside(value.location, in: geo) {
