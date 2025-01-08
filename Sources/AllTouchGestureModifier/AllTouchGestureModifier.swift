@@ -32,15 +32,15 @@ public enum TouchState: Int, Hashable, Equatable {
 
 public struct AllTouchGestureModifier: ViewModifier {
     
-    public let onTouchDown: (CGPoint) -> Void
-    public let onConfirm: (CGPoint) -> Void
-    public let onTouchUp: (CGPoint) -> Void
-    public let onCancel: (CGPoint) -> Void
-    public let onDragging: (CGPoint) -> Void
-    public let onDragInside: (CGPoint) -> Void
-    public let onDragOutside: (CGPoint) -> Void
-    public let onDragEnter: (CGPoint) -> Void
-    public let onDragExit: (CGPoint) -> Void
+    public let onTouchDown: (CGPoint, CGSize) -> Void
+    public let onConfirm: (CGPoint, CGSize) -> Void
+    public let onTouchUp: (CGPoint, CGSize) -> Void
+    public let onCancel: (CGPoint, CGSize) -> Void
+    public let onDragging: (CGPoint, CGSize) -> Void
+    public let onDragInside: (CGPoint, CGSize) -> Void
+    public let onDragOutside: (CGPoint, CGSize) -> Void
+    public let onDragEnter: (CGPoint, CGSize) -> Void
+    public let onDragExit: (CGPoint, CGSize) -> Void
     
     @State private var isDragging = false
     @State private var dragLocation: CGPoint = .zero
@@ -62,31 +62,31 @@ public struct AllTouchGestureModifier: ViewModifier {
                         if !isDragging {
                             if !isPointInside(value.location, in: geo) { return; }
                             isDragging = true
-                            onTouchDown(value.location)
+                            onTouchDown(value.location, geo.size)
                         }
                         if isPointInside(value.location, in: geo) {
-                            onDragInside(value.location)
+                            onDragInside(value.location, geo.size)
                             if !isPointInside(dragLocation, in: geo) {
-                                onDragEnter(value.location)
+                                onDragEnter(value.location, geo.size)
                             }
                         } else {
-                            onDragOutside(value.location)
+                            onDragOutside(value.location, geo.size)
                             if isPointInside(dragLocation, in: geo) {
-                                onDragExit(value.location)
+                                onDragExit(value.location, geo.size)
                             }
                         }
-                        onDragging(value.location)
+                        onDragging(value.location, geo.size)
                         dragLocation = value.location
                     }
                 }
                 .onEnded { value in
                     isDragging = false
-                    onTouchUp(dragLocation)
                     if let geo = geo {
+                        onTouchUp(dragLocation, geo.size)
                         if isPointInside(value.location, in: geo) {
-                            onConfirm(value.location)
+                            onConfirm(value.location, geo.size)
                         } else {
-                            onCancel(value.location)
+                            onCancel(value.location, geo.size)
                         }
                     }
                     dragLocation = value.location
@@ -120,15 +120,15 @@ extension View {
     ///   - onDragEnter: Executed when the user, after dragging outside, re-enters the view area (`dragEnter`).
     ///   - onDragExit: Executed when the user drags out of the view area after being inside (`dragExit`).
     public func allTouchGesture(
-        onTouchDown: @escaping (CGPoint) -> Void = { _ in },
-        onConfirm: @escaping (CGPoint) -> Void = { _ in },
-        onTouchUp: @escaping (CGPoint) -> Void = { _ in },
-        onCancel: @escaping (CGPoint) -> Void = { _ in },
-        onDragging: @escaping (CGPoint) -> Void = { _ in },
-        onDragInside: @escaping (CGPoint) -> Void = { _ in },
-        onDragOutside: @escaping (CGPoint) -> Void = { _ in },
-        onDragEnter: @escaping (CGPoint) -> Void = { _ in },
-        onDragExit: @escaping (CGPoint) -> Void = { _ in }
+        onTouchDown: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onConfirm: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onTouchUp: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onCancel: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onDragging: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onDragInside: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onDragOutside: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onDragEnter: @escaping (CGPoint, CGSize) -> Void = { _, _ in },
+        onDragExit: @escaping (CGPoint, CGSize) -> Void = { _, _ in }
     ) -> some View {
         self.modifier(AllTouchGestureModifier(
             onTouchDown: onTouchDown,
@@ -162,43 +162,43 @@ fileprivate struct AllTouchGesturePreview: View {
                 }
                 .font(.system(size: 20, weight: .bold))
             }
-            .allTouchGesture { pos in
+            .allTouchGesture { pos, size in
                 states.removeFirst()
                 self.pos = pos
                 self.states.append(.touchDown)
-            } onConfirm: { pos in
+            } onConfirm: { pos, size in
                 states.removeFirst()
                 self.pos = pos
                 self.states.append(.confirm)
-            } onTouchUp: { pos in
+            } onTouchUp: { pos, size in
                 states.removeFirst()
                 self.pos = pos
                 self.states.append(.touchUp)
-            } onCancel: { pos in
+            } onCancel: { pos, size in
                 states.removeFirst()
                 self.pos = pos
                 self.states.append(.cancel)
             }
         // Notice how multiple allTouchGesture's behavior can be cumulated.
-            .allTouchGesture{_ in } onDragging: { pos in
+            .allTouchGesture{_, _ in } onDragging: { pos, size in
                 self.pos = pos
                 //                        states.removeFirst()
                 //                        self.states.append(.dragging)
-            } onDragInside: { pos in
+            } onDragInside: { pos, size in
                 // Uncomment to try it out!
                 //                        states.removeFirst()
                 //                        self.pos = pos
                 //                        self.states.append(.dragInside)
-            } onDragOutside: { pos in
+            } onDragOutside: { pos, size in
                 // Uncomment to try it out!
                 //                        states.removeFirst()
                 //                        self.pos = pos
                 //                        self.states.append(.dragOutside)
-            } onDragEnter: { pos in
+            } onDragEnter: { pos, size in
                 states.removeFirst()
                 self.pos = pos
                 self.states.append(.dragEnter)
-            } onDragExit: { pos in
+            } onDragExit: { pos, size in
                 states.removeFirst()
                 self.pos = pos
                 self.states.append(.dragExit)
